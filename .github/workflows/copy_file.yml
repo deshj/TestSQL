@@ -16,7 +16,7 @@ jobs:
       - name: Upload file
         run: |
           mkdir -p Test
-          cp C:\D_drive\GCP\SSH\Powershell_ssh.txt Test/
+          cp C:/D_drive/GCP/SSH/Powershell_ssh.txt Test/
           git add Test/file
           git commit -m "Add file"
           git push
