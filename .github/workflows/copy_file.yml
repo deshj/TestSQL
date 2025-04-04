@@ -1,22 +1,36 @@
-name: Upload File
+name: Upload File to GitHub Repository
 
 on:
   push:
     branches:
-      - main
+      - main  # Or the branch you want to trigger this on
 
 jobs:
   upload-file:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Use Windows runner
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Upload file
+      - name: Upload file artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-file
+          path: C:\D_drive\GCP\SSH\Powershell_ssh.txt  # Path to your local file
+
+      - name: Download file artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my-file
+          path: C:\Users\runneradmin\
+
+      - name: Commit and push changes
         run: |
+          git config --global user.name "Desh Joshi "
+          git config --global user.email "desh.joshi@gmail.com"
           mkdir -p Test
-          cp C:/D_drive/GCP/SSH/Powershell_ssh.txt Test/
-          git add Test/file
+          Copy-Item -Path "C:\Users\runneradmin\Powershell_ssh.txt" -Destination "Test\"
+          git add Test/Powershell_ssh.txt
           git commit -m "Add file"
           git push
