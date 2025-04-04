@@ -10,6 +10,9 @@ jobs:
     runs-on: windows-latest  # Windows runner for PowerShell compatibility
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       # Step 2: Upload file as an artifact (from your local machine)
       - name: Upload file artifact (for testing)
         uses: actions/upload-artifact@v2
