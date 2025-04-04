@@ -1,0 +1,26 @@
+name: Upload SSH Key and Connect to Windows Server
+
+on:
+  push:
+    branches:
+      - main  # Or the branch you want to trigger this on
+
+jobs:
+  upload-and-connect:
+    runs-on: windows-latest  # Windows runner for PowerShell compatibility
+
+    steps:
+      # Step 2: Upload file as an artifact (from your local machine)
+      - name: Upload file artifact (for testing)
+        uses: actions/upload-artifact@v2
+        with:
+          name: ssh-key
+          path: C:\D_drive\GCP\SSH\Powershell_ssh.txt  # Local path to your SSH private key
+
+      # Step 3: Download the SSH private key artifact
+      - name: Download SSH private key
+        uses: actions/download-artifact@v2
+        with:
+          name: ssh-key
+          path: C:\Users\runneradmin\
+
