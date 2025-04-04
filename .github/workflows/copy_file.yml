@@ -1,4 +1,4 @@
-name: Upload File to GitHub Repository
+name: Upload SSH Key and Connect to Windows Server
 
 on:
   push:
@@ -6,31 +6,33 @@ on:
       - main  # Or the branch you want to trigger this on
 
 jobs:
-  upload-file:
-    runs-on: windows-latest  # Use Windows runner
+  upload-and-connect:
+    runs-on: windows-latest  # Windows runner for PowerShell compatibility
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Upload file artifact
+      # Step 2: Upload file artifact (for testing)
+      - name: Upload file artifact (for testing)
         uses: actions/upload-artifact@v2
         with:
-          name: my-file
-          path: C:\D_drive\GCP\SSH\Powershell_ssh.txt  # Path to your local file
+          name: ssh-key
+          path: C:\D_drive\GCP\SSH\Powershell_ssh.txt  # Local path to your SSH private key
 
-      - name: Download file artifact
+      # Step 3: Download the SSH private key artifact
+      - name: Download SSH private key
         uses: actions/download-artifact@v2
         with:
-          name: my-file
-          path: C:\Users\runneradmin\
+          name: ssh-key
+          path: C:\Users\runneradmin\downloads\ssh-key
 
       - name: Commit and push changes
         run: |
-          git config --global user.name "Desh Joshi "
-          git config --global user.email "desh.joshi@gmail.com"
-          mkdir -p Test
-          Copy-Item -Path "C:\Users\runneradmin\Powershell_ssh.txt" -Destination "Test\"
-          git add Test/Powershell_ssh.txt
-          git commit -m "Add file"
+          git config --global user.name "Your Name"
+          git config --global user.email "your-email@example.com"
+          mkdir -p new_directory
+          Copy-Item -Path "C:\Users\runneradmin\downloads\ssh-key\Powershell_ssh.txt" -Destination "new_directory\"
+          git add new_directory/Powershell_ssh.txt
+          git commit -m "Add SSH key"
           git push
