@@ -13,15 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Read content from local file
+      - name: Create file with content
         run: |
-          $content = Get-Content -Path "C:\D_drive\GCP\SSH\Powershell_ssh.txt"
+          $content = @"
+          -----BEGIN OPENSSH PRIVATE KEY-----
+          b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAAAA...
+          -----END OPENSSH PRIVATE KEY-----
+          "@
           New-Item -Path new_directory\file.txt -ItemType File -Value $content
 
       - name: Commit and push changes
         run: |
-          git config --global user.name "desh"
-          git config --global user.email "desh.joshi@gmail.com"
+          git config --global user.name "Your Name"
+          git config --global user.email "your-email@example.com"
           git add new_directory\file.txt
           git commit -m "Add file with content from laptop"
           git push
