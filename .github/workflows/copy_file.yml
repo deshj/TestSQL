@@ -17,8 +17,8 @@ jobs:
 
           $repo = "$env:GITHUB_REPOSITORY"
           $owner, $name = $repo.Split('/')
-          $filePath = "README.md"   # 👈 update this if the file is in a folder
-          $branch = "main"          # 👈 change to "master" or correct branch
+          $filePath = "README.md"   # ✅ correct file name, relative to root
+          $branch = "main"          # ✅ correct branch name
 
           $url = "https://api.github.com/repos/$owner/$name/contents/$filePath?ref=$branch"
           Write-Host "Calling URL: $url"
