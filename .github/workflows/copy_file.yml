@@ -1,31 +1,27 @@
-name: Create File from Laptop Content
+name: Get File Content on Windows
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  create-file:
+  fetch-file:
     runs-on: windows-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Create file with content
+      - name: Get file content from GitHub using PowerShell
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
         run: |
-          $content = @"
-          -----BEGIN OPENSSH PRIVATE KEY-----
-          b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAAAA...
-          -----END OPENSSH PRIVATE KEY-----
-          "@
-          New-Item -Path new_directory\file.txt -ItemType File -Value $content
+          $repo = "$env:GITHUB_REPOSITORY"
+          $owner, $name = $repo.Split('/')
+          $filePath = "test.txt"
+          $branch = "main"
 
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "your-email@example.com"
-          git add new_directory\file.txt
-          git commit -m "Add file with content from laptop"
-          git push
+          $url = "https://api.github.com/repos/$owner/$name/contents/$filePath?ref=$branch"
+          $headers = @{ Authorization = "Bearer $env:GITHUB_TOKEN"; "User-Agent" = "github-action" }
+
+          $response = Invoke-RestMethod -Uri $url -Headers $headers
+          $encodedContent = $response.content
+
+          Write-Host "Encoded Content:"
+          Write-Host $
