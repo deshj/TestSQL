@@ -7,21 +7,38 @@ jobs:
   fetch-file:
     runs-on: windows-latest
     steps:
-      - name: Get file content from GitHub using PowerShell
+      - name: Fetch file using PowerShell
+        shell: pwsh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: pwsh
         run: |
+          # Debug: Print repo and branch
+          Write-Host "GITHUB_REPOSITORY: $env:GITHUB_REPOSITORY"
+
           $repo = "$env:GITHUB_REPOSITORY"
           $owner, $name = $repo.Split('/')
-          $filePath = "test.txt"
-          $branch = "main"
+          $filePath = "README.md"   # 👈 update this if the file is in a folder
+          $branch = "main"          # 👈 change to "master" or correct branch
 
           $url = "https://api.github.com/repos/$owner/$name/contents/$filePath?ref=$branch"
-          $headers = @{ Authorization = "Bearer $env:GITHUB_TOKEN"; "User-Agent" = "github-action" }
+          Write-Host "Calling URL: $url"
 
-          $response = Invoke-RestMethod -Uri $url -Headers $headers
-          $encodedContent = $response.content
+          $headers = @{
+            Authorization = "Bearer $env:GITHUB_TOKEN"
+            "User-Agent" = "github-action"
+            Accept = "application/vnd.github.v3+json"
+          }
 
-          Write-Host "Encoded Content:"
-          Write-Host $
+          try {
+            $response = Invoke-RestMethod -Uri $url -Headers $headers
+            $encodedContent = $response.content
+            $decodedBytes = [System.Convert]::FromBase64String($encodedContent)
+            $decodedContent = [System.Text.Encoding]::UTF8.GetString($decodedBytes)
+
+            Write-Host "`nDecoded Content:"
+            Write-Host $decodedContent
+          }
+          catch {
+            Write-Error "Failed to get file. Status Code: $($_.Exception.Response.StatusCode.Value__)"
+            Write-Error $_
+          }
