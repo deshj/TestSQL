@@ -20,7 +20,7 @@ jobs:
           $filePath = "README.md"   # ✅ correct file name, relative to root
           $branch = "main"          # ✅ correct branch name
 
-          $url = "https://api.github.com/repos/$owner/$name/contents/text.txt?ref=$branch"
+          $url = "https://api.github.com/repos/$owner/$name/contents/test.txt?ref=$branch"
           Write-Host "Calling URL: $url"
 
           $headers = @{
